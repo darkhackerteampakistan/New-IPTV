@@ -1,55 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Name-IPTV | Premium IPTV Streaming</title>
+
+<title>Premium IPTV</title>
 
 <meta name="description" content="Premium IPTV Streaming Platform">
-<meta name="keywords" content="IPTV, Live TV, Streaming">
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<meta name="theme-color" content="#0f172a">
 
 <link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
 </head>
 
-<body class="bg-slate-950 text-white">
+<body>
 
 <div id="loader">
-<div class="loader-spinner"></div>
-<h2>Name-IPTV</h2>
+
+<div class="loader"></div>
+
+<h2 style="margin-top:20px;">
+Premium IPTV
+</h2>
+
 </div>
 
-<header class="header glass">
+<header>
+
 <div class="logo">
-<span class="text-blue-400">Name</span>-IPTV
+<span>Premium</span> IPTV
 </div>
 
-<div class="search-wrapper">
-<input id="searchInput" placeholder="Search channels...">
+<div class="search-box">
+
+<input
+id="searchInput"
+type="text"
+placeholder="Search channels..."
+>
+
 </div>
+
+<div style="display:flex;gap:10px;">
 
 <select id="categoryFilter">
-<option value="all">All Categories</option>
+<option value="all">
+All Categories
+</option>
 </select>
 
 <select id="countryFilter">
-<option value="all">All Countries</option>
+<option value="all">
+All Countries
+</option>
 </select>
 
-<div class="stats">
-Live:
-<span id="channelCount">0</span>
 </div>
+
+<div>
+
+LIVE :
+<span id="channelCount">0</span>
+
+</div>
+
 </header>
 
 <section class="hero">
+
 <div class="hero-content">
-<h1>Premium IPTV Streaming</h1>
-<p>Watch Live TV Anywhere</p>
-<button id="watchNowBtn">Watch Now</button>
+
+<h1>
+Premium IPTV Streaming
+</h1>
+
+<p>
+Watch Live TV Anywhere
+</p>
+
+<button
+class="watch-btn"
+onclick="
+document.getElementById('video')
+.scrollIntoView({
+behavior:'smooth'
+})
+">
+
+Watch Now
+
+</button>
+
 </div>
+
 </section>
 
 <div class="layout">
@@ -57,25 +104,101 @@ Live:
 <aside class="sidebar glass">
 
 <ul>
-<li data-category="all">All Channels</li>
-<li data-category="Sports">Sports</li>
-<li data-category="Movies">Movies</li>
-<li data-category="News">News</li>
-<li data-category="Kids">Kids</li>
-<li data-category="Music">Music</li>
-<li id="favoritesBtn">Favorites</li>
+
+<li
+class="active"
+id="allChannelsBtn"
+>
+All Channels
+</li>
+
+<li data-category="Sports">
+Sports
+</li>
+
+<li data-category="Movies">
+Movies
+</li>
+
+<li data-category="News">
+News
+</li>
+
+<li data-category="Kids">
+Kids
+</li>
+
+<li data-category="Music">
+Music
+</li>
+
+<li id="favoritesBtn">
+Favorites
+</li>
+
+<li id="recentBtn">
+Recently Watched
+</li>
+
 </ul>
 
-<div class="clock" id="clock"></div>
+<div class="clock" id="clock">
+
+00:00:00
+
+</div>
 
 </aside>
 
 <main>
 
+<div class="stats-grid">
+
+<div class="stat-card glass">
+
+<h3 id="channelCount">
+0
+</h3>
+
+<p>
+Total Channels
+</p>
+
+</div>
+
+<div class="stat-card glass">
+
+<h3>
+LIVE
+</h3>
+
+<p>
+Streaming
+</p>
+
+</div>
+
+<div class="stat-card glass">
+
+<h3>
+HD
+</h3>
+
+<p>
+Quality Streams
+</p>
+
+</div>
+
+</div>
+
 <div class="player-card glass">
 
-<div class="player-header">
-<span id="currentChannel">Select Channel</span>
+<div class="player-title"
+id="currentChannel">
+
+Select Channel
+
 </div>
 
 <video
@@ -87,28 +210,65 @@ playsinline
 
 </div>
 
-<h2 class="section-title">Channels</h2>
+<h2
+style="
+margin-bottom:20px;
+font-size:26px;
+"
+>
 
-<div id="channelsGrid" class="channels-grid">
+Live Channels
+
+</h2>
+
+<div
+id="channelsGrid"
+class="channels-grid"
+>
+
 </div>
 
 </main>
 
 </div>
 
-<nav class="mobile-nav">
-<button>Home</button>
-<button>Live</button>
-<button>Favorites</button>
-<button>Profile</button>
+<nav class="bottom-nav">
+
+<button id="allChannelsBtn">
+Home
+</button>
+
+<button id="favoritesBtn">
+Favorites
+</button>
+
+<button id="recentBtn">
+Recent
+</button>
+
+<button>
+Live
+</button>
+
 </nav>
 
 <footer>
-<h3>Name-IPTV</h3>
-<p>Premium IPTV Streaming Platform</p>
-<p>© 2026</p>
+
+<h2>
+Premium IPTV
+</h2>
+
+<p>
+Premium IPTV Streaming Platform
+</p>
+
+<p>
+© 2026 All Rights Reserved
+</p>
+
 </footer>
 
 <script src="app.js"></script>
+
 </body>
 </html>
