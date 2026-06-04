@@ -1,120 +1,150 @@
-const API =
-"https://raw.githubusercontent.com/foridul422/IPTV-/main/channels.json";
+const CHANNELS_FILE = "./channels.json";
 
 let channels = [];
+let filteredChannels = [];
+
+const player = document.getElementById("video");
+const channelGrid = document.getElementById("channelsGrid");
+const searchInput = document.getElementById("searchInput");
+const categoryFilter = document.getElementById("categoryFilter");
+const countryFilter = document.getElementById("countryFilter");
+const currentChannel = document.getElementById("currentChannel");
+const channelCount = document.getElementById("channelCount");
+
 let favorites =
 JSON.parse(localStorage.getItem("favorites")) || [];
 
-const grid = document.getElementById("channelsGrid");
-
-const searchInput =
-document.getElementById("searchInput");
-
-const categoryFilter =
-document.getElementById("categoryFilter");
-
-const countryFilter =
-document.getElementById("countryFilter");
+let recent =
+JSON.parse(localStorage.getItem("recentlyWatched")) || [];
 
 async function loadChannels() {
 
-try{
+try {
 
-const res = await fetch(API);
-channels = await res.json();
+showSkeleton();
 
-document.getElementById("channelCount")
-.innerText = channels.length;
+const response = await fetch(CHANNELS_FILE);
+
+channels = await response.json();
+
+filteredChannels = [...channels];
 
 populateFilters();
 
-renderChannels(channels);
+renderChannels(filteredChannels);
 
-}catch(err){
+channelCount.textContent = channels.length;
+
+hideLoader();
+
+} catch (err) {
 
 console.error(err);
 
-}
-
-setTimeout(()=>{
-document.getElementById("loader").style.display="none";
-},1000);
+channelGrid.innerHTML =
+"<h2>Failed to load channels.</h2>";
 
 }
 
-function populateFilters(){
+}
+
+function populateFilters() {
 
 const categories =
-[...new Set(channels.map(c=>c.category))];
+[...new Set(channels.map(x => x.category))];
 
 const countries =
-[...new Set(channels.map(c=>c.country))];
+[...new Set(channels.map(x => x.country))];
 
-categories.forEach(cat=>{
+categories.forEach(cat => {
 
-const opt=document.createElement("option");
-opt.value=cat;
-opt.textContent=cat;
-categoryFilter.appendChild(opt);
+const option =
+document.createElement("option");
+
+option.value = cat;
+option.textContent = cat;
+
+categoryFilter.appendChild(option);
 
 });
 
-countries.forEach(country=>{
+countries.forEach(country => {
 
-const opt=document.createElement("option");
-opt.value=country;
-opt.textContent=country;
-countryFilter.appendChild(opt);
+const option =
+document.createElement("option");
+
+option.value = country;
+option.textContent = country;
+
+countryFilter.appendChild(option);
 
 });
 
 }
 
-function renderChannels(data){
+function renderChannels(data) {
 
-grid.innerHTML="";
+channelGrid.innerHTML = "";
 
-data.forEach(channel=>{
+if(data.length === 0){
 
-const fav =
+channelGrid.innerHTML =
+"<h3>No Channels Found</h3>";
+
+return;
+
+}
+
+data.forEach(channel => {
+
+const card =
+document.createElement("div");
+
+card.className =
+"channel-card glass fade-in";
+
+const isFav =
 favorites.includes(channel.name);
 
-const card=document.createElement("div");
+card.innerHTML = `
 
-card.className=
-"channel-card glass";
+<div class="favorite"
+data-name="${channel.name}">
+${isFav ? "★" : "☆"}
+</div>
 
-card.innerHTML=`
+<div class="live-badge">
+LIVE
+</div>
 
 <img
+class="channel-logo"
 loading="lazy"
 src="${channel.logo}"
-class="channel-logo">
+alt="${channel.name}"
+>
 
-<h3>${channel.name}</h3>
+<div class="channel-name">
+${channel.name}
+</div>
 
-<p>${channel.category}</p>
+<div class="channel-category">
+${channel.category}
+</div>
 
-<p>${channel.country}</p>
-
-<span class="live-badge">
-LIVE
-</span>
-
-<div class="favorite">
-${fav ? "★" : "☆"}
+<div class="channel-category">
+${channel.country}
 </div>
 
 `;
 
-card.addEventListener("click",()=>{
-
+card.addEventListener("click", () => {
 playChannel(channel);
-
 });
 
-card.querySelector(".favorite")
-.addEventListener("click",(e)=>{
+card
+.querySelector(".favorite")
+.addEventListener("click", e => {
 
 e.stopPropagation();
 
@@ -122,49 +152,52 @@ toggleFavorite(channel.name);
 
 });
 
-grid.appendChild(card);
+channelGrid.appendChild(card);
 
 });
 
 }
 
-function playChannel(channel){
+function playChannel(channel) {
 
-document.getElementById("currentChannel")
-.innerText = channel.name;
+currentChannel.textContent =
+channel.name;
 
-const video =
-document.getElementById("video");
+saveRecent(channel);
 
-localStorage.setItem(
-"recent",
-JSON.stringify(channel)
-);
-
-if(Hls.isSupported()){
+if(Hls.isSupported()) {
 
 const hls = new Hls();
 
 hls.loadSource(channel.url);
 
-hls.attachMedia(video);
+hls.attachMedia(player);
 
-}else{
+hls.on(Hls.Events.MANIFEST_PARSED,
+function() {
 
-video.src = channel.url;
+player.play();
+
+});
+
+} else {
+
+player.src = channel.url;
+
+player.play();
 
 }
 
 }
 
-function toggleFavorite(name){
+function toggleFavorite(name) {
 
-if(favorites.includes(name)){
+if(favorites.includes(name)) {
 
 favorites =
-favorites.filter(x=>x!==name);
+favorites.filter(x => x !== name);
 
-}else{
+} else {
 
 favorites.push(name);
 
@@ -175,15 +208,29 @@ localStorage.setItem(
 JSON.stringify(favorites)
 );
 
-renderChannels(channels);
+renderChannels(filteredChannels);
 
 }
 
-searchInput.addEventListener("input",filterChannels);
-categoryFilter.addEventListener("change",filterChannels);
-countryFilter.addEventListener("change",filterChannels);
+function saveRecent(channel) {
 
-function filterChannels(){
+recent =
+recent.filter(
+x => x.name !== channel.name
+);
+
+recent.unshift(channel);
+
+recent = recent.slice(0,20);
+
+localStorage.setItem(
+"recentlyWatched",
+JSON.stringify(recent)
+);
+
+}
+
+function filterChannels() {
 
 const search =
 searchInput.value.toLowerCase();
@@ -194,51 +241,140 @@ categoryFilter.value;
 const country =
 countryFilter.value;
 
-const filtered =
-channels.filter(c=>{
+filteredChannels =
+channels.filter(channel => {
 
-const matchSearch =
-c.name.toLowerCase().includes(search);
+const searchMatch =
+channel.name
+.toLowerCase()
+.includes(search);
 
-const matchCategory =
-category==="all" ||
-c.category===category;
+const categoryMatch =
+category === "all" ||
+channel.category === category;
 
-const matchCountry =
-country==="all" ||
-c.country===country;
+const countryMatch =
+country === "all" ||
+channel.country === country;
 
 return (
-matchSearch &&
-matchCategory &&
-matchCountry
+searchMatch &&
+categoryMatch &&
+countryMatch
 );
 
 });
 
-renderChannels(filtered);
+renderChannels(filteredChannels);
 
 }
 
-document
-.getElementById("favoritesBtn")
-.addEventListener("click",()=>{
+function showFavorites() {
 
 const favChannels =
-channels.filter(c=>
-favorites.includes(c.name)
+channels.filter(channel =>
+favorites.includes(channel.name)
 );
 
 renderChannels(favChannels);
 
-});
+}
 
-setInterval(()=>{
+function showRecent() {
 
-document.getElementById("clock")
-.innerText =
+renderChannels(recent);
+
+}
+
+function showSkeleton() {
+
+channelGrid.innerHTML = "";
+
+for(let i=0;i<12;i++){
+
+const div =
+document.createElement("div");
+
+div.className =
+"channel-card skeleton";
+
+div.style.height = "220px";
+
+channelGrid.appendChild(div);
+
+}
+
+}
+
+function hideLoader() {
+
+const loader =
+document.getElementById("loader");
+
+if(loader){
+
+setTimeout(() => {
+
+loader.style.display = "none";
+
+},700);
+
+}
+
+}
+
+function startClock() {
+
+const clock =
+document.getElementById("clock");
+
+if(!clock) return;
+
+setInterval(() => {
+
+clock.textContent =
 new Date().toLocaleTimeString();
 
 },1000);
+
+}
+
+searchInput?.addEventListener(
+"input",
+filterChannels
+);
+
+categoryFilter?.addEventListener(
+"change",
+filterChannels
+);
+
+countryFilter?.addEventListener(
+"change",
+filterChannels
+);
+
+document
+.getElementById("favoritesBtn")
+?.addEventListener(
+"click",
+showFavorites
+);
+
+document
+.getElementById("recentBtn")
+?.addEventListener(
+"click",
+showRecent
+);
+
+document
+.getElementById("allChannelsBtn")
+?.addEventListener(
+"click",
+() => renderChannels(channels)
+);
+
+startClock();
 
 loadChannels();
