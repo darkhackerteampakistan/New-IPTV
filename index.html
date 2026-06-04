@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Name-IPTV | Premium IPTV Streaming</title>
+
+<meta name="description" content="Premium IPTV Streaming Platform">
+<meta name="keywords" content="IPTV, Live TV, Streaming">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-slate-950 text-white">
+
+<div id="loader">
+<div class="loader-spinner"></div>
+<h2>Name-IPTV</h2>
+</div>
+
+<header class="header glass">
+<div class="logo">
+<span class="text-blue-400">Name</span>-IPTV
+</div>
+
+<div class="search-wrapper">
+<input id="searchInput" placeholder="Search channels...">
+</div>
+
+<select id="categoryFilter">
+<option value="all">All Categories</option>
+</select>
+
+<select id="countryFilter">
+<option value="all">All Countries</option>
+</select>
+
+<div class="stats">
+Live:
+<span id="channelCount">0</span>
+</div>
+</header>
+
+<section class="hero">
+<div class="hero-content">
+<h1>Premium IPTV Streaming</h1>
+<p>Watch Live TV Anywhere</p>
+<button id="watchNowBtn">Watch Now</button>
+</div>
+</section>
+
+<div class="layout">
+
+<aside class="sidebar glass">
+
+<ul>
+<li data-category="all">All Channels</li>
+<li data-category="Sports">Sports</li>
+<li data-category="Movies">Movies</li>
+<li data-category="News">News</li>
+<li data-category="Kids">Kids</li>
+<li data-category="Music">Music</li>
+<li id="favoritesBtn">Favorites</li>
+</ul>
+
+<div class="clock" id="clock"></div>
+
+</aside>
+
+<main>
+
+<div class="player-card glass">
+
+<div class="player-header">
+<span id="currentChannel">Select Channel</span>
+</div>
+
+<video
+id="video"
+controls
+autoplay
+playsinline
+></video>
+
+</div>
+
+<h2 class="section-title">Channels</h2>
+
+<div id="channelsGrid" class="channels-grid">
+</div>
+
+</main>
+
+</div>
+
+<nav class="mobile-nav">
+<button>Home</button>
+<button>Live</button>
+<button>Favorites</button>
+<button>Profile</button>
+</nav>
+
+<footer>
+<h3>Name-IPTV</h3>
+<p>Premium IPTV Streaming Platform</p>
+<p>© 2026</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
